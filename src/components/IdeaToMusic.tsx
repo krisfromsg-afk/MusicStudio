@@ -63,18 +63,23 @@ export const IdeaToMusic: React.FC<IdeaToMusicProps> = ({ onBlueprintGenerated }
       const jsonText = data.result;
 
       if (jsonText) {
-        setResult(jsonText);
-        if (onBlueprintGenerated) {
-          try {
-            onBlueprintGenerated(JSON.parse(jsonText));
-          } catch (e) {
-            console.error("Failed to parse JSON", e);
+        // Try to parse and clean up the JSON
+        let cleanJson = jsonText;
+        try {
+          cleanJson = jsonText.replace(/```json\n?|\n?```/g, '').trim();
+          const parsedResult = JSON.parse(cleanJson);
+          setResult(JSON.stringify(parsedResult, null, 2));
+          if (onBlueprintGenerated) {
+            onBlueprintGenerated(parsedResult);
           }
+        } catch (e) {
+          console.error("Failed to parse JSON", e);
+          setResult(jsonText); // Fallback to raw text if parsing fails
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating blueprint:', error);
-      alert('Failed to generate blueprint. Please try again.');
+      alert(error.message || 'Failed to generate blueprint. Please try again.');
     } finally {
       setLoading(false);
     }

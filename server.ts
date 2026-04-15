@@ -181,7 +181,7 @@ async function startServer() {
       `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.1-flash-lite-preview',
         contents: prompt,
         config: {
           systemInstruction: systemInstruction || "You are an expert music producer. Generate a JSON blueprint for a song based on the user's input. The JSON must have the following keys: 'title', 'style', 'lyrics'.",
